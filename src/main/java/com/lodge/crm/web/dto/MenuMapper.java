@@ -22,6 +22,13 @@ public class MenuMapper {
 		dto.setMenuType(menu.getMenuType());
 		dto.setMenuUrl(menu.getMenuUrl());
 		
+		if(menu.getMenuLevel().equals(1)){
+			dto.setMenuDisName(menu.getMenuName());
+		}
+		else if(menu.getMenuLevel().equals(2)){
+			dto.setMenuDisName("&nbsp;&nbsp;"+menu.getMenuName());
+		}
+		
 		if(menu.getParentMenu()!=null){
 			dto.setParentMenuCode(menu.getParentMenu().getMenuCode());
 		}

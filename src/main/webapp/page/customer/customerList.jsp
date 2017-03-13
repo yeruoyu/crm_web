@@ -7,6 +7,7 @@
 <c:url value="/customer/customerEdit" var="addUrl" />
 <c:url value="/customer/customerEdit" var="editUrl" />
 <c:url value="/channel/allChannel" var="channelUrl" />
+<c:url value="/user/allUser" var="userUrl" />
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -107,43 +108,34 @@ $(function() {
 			name : 'customerCode',
 			label : '客户Code',
 			width : 100,
-			editable : true,
-			
-			//formatoptions:{baseLinkUrl:"/crm_web/customer/customerDetail",idName: "customerCode"},
-			editrules : {
-				required : true
-			},
-			editoptions : {
-				size : 10
-			}
+			editable : false
 		}, {
 			name : 'customerName',
 			index : 'customerName',
 			label : '客户姓名',
 			width : 100,
-			editable : true,
-			formatter: formateadorLink,
-			editrules : {
-				required : false
-			},
-			editoptions : {
-				size : 10
-			}
+			formatter : formatViewLink,
+			editable : false
+		}, {
+			name : 'intentionMajor',
+			index : 'intentionMajor',
+			label : '意向专业',
+			width : 100,
+			editable : false
+		}, {
+			name : 'intentionContry',
+			index : 'intentionContry',
+			label : '意向国家',
+			width : 100,
+			editable : false
 		}, {
 			name : 'channelCode',
 			index : 'channelCode',
 			label : '来源渠道',
 			width : 100,
-			editable : true,
-			editrules : {
-				required : false
-			},
-			edittype : "select",
+			editable : false,
 			formatter : 'select',
 			stype : 'select',
-			editoptions : {
-				value : getAllChannel()
-			},
 			formatoptions : {
 				value : getAllChannel()
 			},
@@ -151,62 +143,58 @@ $(function() {
 				sopt : [ 'eq' ],
 				value : getAllChannel()
 			},
-			editoptions : {
-				size : 10
+		}, {
+			name : 'createUserCode',
+			index : 'createUserCode', 
+			label : '录入人',
+			width : 100,
+			editable : false,
+			formatter : 'select',
+			stype : 'select',
+			formatoptions : {
+				value : getAllUser()
+			},
+			searchoptions : {
+				sopt : [ 'eq' ],
+				value : getAllUser()
 			}
 		}, {
-			name : 'userName',
-			index : 'userName',
-			label : '客户关联人员',
+			name : 'createTime',
+			index : 'createTime',
+			label : '录入时间',
 			width : 100,
-			editable : true,
-			editrules : {
-				required : false
+			editable : false,
+			
+		}, {
+			name : 'principalCode',
+			index : 'principalCode',
+			label : '负责人',
+			width : 100,
+			editable : false,
+			formatter : 'select',
+			stype : 'select',
+			formatoptions : {
+				value : getAllUser()
 			},
-			editoptions : {
-				size : 10
+			searchoptions : {
+				sopt : [ 'eq' ],
+				value : getAllUser()
 			}
 		}, {
-			name : 'phone',
-			index : 'phone',
-			label : '联系电话',
+			name : 'lastContactTime',
+			index : 'lastContactTime',
+			label : '最后联系时间',
 			width : 100,
-			editable : true,
-			editrules : {
-				required : false,
-				number:true
-			},
-			editoptions : {
-				size : 10
-			}
-		}, {
-			name : 'mobile',
-			index : 'mobile',
-			label : '联系手机',
-			width : 100,
-			editable : true,
-			editrules : {
-				required : false,
-				number:true
-			},
-			editoptions : {
-				size : 10
-			}
+			editable : false,
+			
 		}, {
 			name : 'customerLocked',
 			index : 'customerLocked',
 			label : '客户锁定',
 			width : 80,
-			editable : true,
-			editrules : {
-				required : false
-			},
-			edittype : "select",
+			editable : false,
 			formatter : 'select',
 			stype : 'select',
-			editoptions : {
-				value : "1:锁定;0:未锁定"
-			},
 			formatoptions : {
 				value : "1:锁定;0:未锁定"
 			},
@@ -219,16 +207,9 @@ $(function() {
 			index : 'customerStatus',
 			label : '客户状态',
 			width : 80,
-			editable : true,
-			editrules : {
-				required : false
-			},
-			edittype : "select",
+			editable : false,
 			formatter : 'select',
 			stype : 'select',
-			editoptions : {
-				value : "1:活动;0:停用;-1:注销"
-			},
 			formatoptions : {
 				value : "1:活动;0:停用;-1:注销"
 			},
@@ -236,7 +217,16 @@ $(function() {
 				sopt : [ 'eq' ],
 				value : ":;1:活动;0:停用;-1:注销"
 			}
-		} ],
+		}
+/* 		,{
+			name : 'execEdit',
+			index : 'execEdit',
+			label : '操作',
+			width : 120,
+			editable : false,
+			formatter : formatEditLink
+		} */ 
+		],
 		postData : {},
 		rowNum : 10,
 		rowList : [ 1,2,5,10, 20, 40, 60 ],
@@ -244,11 +234,11 @@ $(function() {
 		autowidth : true,
 		rownumbers : false,
 		pager : '#pager',
-		sortname : 'customerCode',
+		sortname : 'lastContactTime',
 		viewrecords : true,
 		sortable : true,
 		loadonce : false,
-		sortorder : "asc",
+		sortorder : "desc",
 		emptyrecords : "空记录",
 		loadComplete : function() {
 			jQuery("#grid").trigger("reloadGrid");
@@ -273,7 +263,7 @@ $(function() {
 		del : false,
 		search : false,
 		refresh : true,
-		view : true,
+		view : false,
 		position : "left",
 		cloneToTop : false
 	}, {}, {}, {}, { // search
@@ -283,26 +273,6 @@ $(function() {
 		closeAfterSearch : true
 	});
 
-	$("#grid").navButtonAdd('#pager', {
-		caption : "添加",
-		buttonicon : "glyphicon-plus",
-		onClickButton : addRow,
-		closeAfterEdit : true,
-		position : "last",
-		title : "添加顾客",
-		cursor : "pointer"
-	});
-
-
-	$("#grid").navButtonAdd('#pager', {
-		caption : "修改",
-		buttonicon : "glyphicon-edit",
-		onClickButton : editRow,
-		closeAfterEdit : true,
-		position : "last",
-		title : "编辑顾客",
-		cursor : "pointer"
-	});
 	// Toolbar Search
 	$("#grid").jqGrid('filterToolbar', {
 		stringResult : true,
@@ -310,28 +280,6 @@ $(function() {
 		defaultSearch : "cn"
 	});
 });
-
-function addRow() {
-	url = '${addUrl}';
-	window.location.href= url;
-} // end of addRow
-
-function editRow() {
-	// Get the currently selected row
-	var row = $('#grid').jqGrid('getGridParam', 'selrow');
-	
-	if (row != null) {
-		var rowdata = $('#grid').getRowData(row);
-		var customerCode = rowdata.customerCode
-		url = '${editUrl}?customerCode='+rowdata.customerCode;
-		window.location.href= url;
-	} else {
-		$.teninedialog({
-            title:'警告',
-            content:'请先选择需要修改的记录!'
-        });
-	}
-}
 
 function getAllChannel(){
 	var str=":;";
@@ -355,8 +303,35 @@ function getAllChannel(){
 	return str;
 }
 
-function formateadorLink(cellvalue, options, rowObject) {
-    return "<a href=/crm_web/customer/customerDetail?customerCode="+ rowObject.customerCode + ">" + cellvalue + "</a>";
+function getAllUser(){
+	var str=":;";
+	$.ajax({
+		type:'post',
+		async:false,
+		url:'${userUrl}',
+		success:function(data){
+			if (data != null) {
+				var length=data.length;
+				for(var i=0;i<length;i++){
+					if(i!=length-1){
+						str+=data[i].userCode+":"+data[i].userName+";";
+					}else{ 
+						str+=data[i].userCode+":"+data[i].userName;
+					}
+				}
+			}
+		}
+	});
+	return str;
 }
+
+function formatViewLink(cellvalue, options, rowObject) {
+    return "<a href=/crm_web/customer/customerDetail?returnUrl=customerList&customerCode="+ rowObject.customerCode + ">"+rowObject.customerName+"</a>";
+}
+
+/* function formatEditLink(cellvalue, options, rowObject) {
+    return "<a href=/crm_web/customer/customerContact?customerCode="+ rowObject.customerCode + " class='btn btn-success btn-sm'>联系</a>"
+    +" <a href=/crm_web/customer/customerEdit?customerCode="+ rowObject.customerCode + " class='btn btn-success btn-sm'>修改</a>";
+} */
 </script>
 </html>

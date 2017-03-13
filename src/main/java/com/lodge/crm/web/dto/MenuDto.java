@@ -16,6 +16,8 @@ public class MenuDto implements Serializable {
 	
 	private String menuName;
 	
+	private String menuDisName;
+	
 	private Integer menuSort;
 	
 	private int menuStatus;
@@ -26,6 +28,7 @@ public class MenuDto implements Serializable {
 
 	private String parentMenuCode;
 	
+	private Integer selFlag;
 
 	public String getMenuCode() {
 		return menuCode;
@@ -106,4 +109,23 @@ public class MenuDto implements Serializable {
 	public void setMenuUrl(String menuUrl) {
 		this.menuUrl = menuUrl;
 	}
+
+	public Integer getSelFlag() {
+		return selFlag;
+	}
+
+	public void setSelFlag(Integer selFlag) {
+		this.selFlag = selFlag;
+	}
+
+	public String getMenuDisName() {
+		return menuDisName;
+	}
+
+	public void setMenuDisName(String menuDisName) {
+		this.menuDisName = menuDisName;
+	}
+	
+	
+
 }

@@ -4,8 +4,10 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <c:url value="/records" var="recordsUrl" />
-<c:url value="/channel/allChannel" var="channelUrl" />
+<c:url value="/publishRecords" var="publishRecordsUrl" />
 <c:url value="/customer/lockCustomer" var="lockCustomerUrl" />
+<c:url value="/channel/allChannel" var="channelUrl" />
+<c:url value="/scheduleRecords" var="scheduleUrl" />
 
 <html lang="en">
 <head>
@@ -43,10 +45,24 @@
 			</div>
 			<!-- Content Panel -->
 			<div class="row">
-				<div class="col-md-12">
+				<div class="col-md-6">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<h3 class="panel-title">未选定客户</h3>
+							<h3 class="panel-title">公告</h3>
+						</div>
+						<div class="panel-body">
+							<!-- Content -->
+							<div id="publishJgrid">
+								<table id='publishGrid' ></table>
+								<div id='publishPager'></div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h3 class="panel-title">客户联系提醒</h3>
 						</div>
 						<div class="panel-body">
 							<!-- Content -->
@@ -244,6 +260,72 @@ $(function() {
     }
 });
 
+/** 公告信息 */
+$(function() {
+	$.jgrid.styleUI.Bootstrap.base.rowTable = "table table-bordered table-striped";
+		
+	$("#publishGrid").jqGrid({
+		url : '${publishRecordsUrl}',
+		datatype : 'json',
+		mtype : 'GET',
+		colModel : [{
+			index : 'publishId',
+			name : 'publishId',
+			label : '公告Id',
+			width : 50,
+			editable : false
+		}, {
+			name : 'publishTitle',
+			index : 'publishTitle',
+			label : '公告标题',
+			width : 200,
+			editable : false,
+		},
+		{
+			name : 'execViewPublish',
+			index : 'execViewPublish',
+			label : '查看',
+			
+			width : 50,
+			editable : false,
+			formatter : formateExceViewPublish
+		} ],
+		postData : {},
+		rowNum : 5,
+		height : 200,
+		autowidth : true,
+		rownumbers : false,
+		pager : '#publishPager',
+		viewrecords : false,
+		sortable : false,
+		loadonce : false,
+		emptyrecords : "空记录",
+		loadComplete : function() {
+			jQuery("#publishGrid").trigger("reloadGrid");
+		},
+		jsonReader : {
+			root : "rows",
+			page : "page",
+			total : "total",
+			records : "records",
+			repeatitems : false,
+			cell : "cell",
+			id : "id"
+		}
+	});
+
+	$("#publishGrid").jqGrid('navGrid', '#publishPager', {
+		edit : false,
+		add : false,
+		del : false,
+		search : false,
+		refresh : true,
+		view : false,
+		position : "left",
+		cloneToTop : false
+	}, {}, {}, {}, {});
+});
+
 function getAllChannel(){
 	var str=":;";
 	$.ajax({
@@ -266,9 +348,13 @@ function getAllChannel(){
 	return str;
 }
 
+function formateExceViewPublish(cellvalue, options, rowObject) {
+    var strFromat =  "<a href=/crm_web/publish/publishDetail?publishId="+ rowObject.publishId + ">查看</a>";
+	return strFromat;
+}
 
 function formateExceLock(cellvalue, options, rowObject) {
-    var strFromat =  "<a href=/crm_web/customer/customerDetail?customerCode="+ rowObject.customerCode + ">查看</a>";
+    var strFromat =  "<a href=/crm_web/customer/customerDetail?returnUrl=myCustomerList&customerCode="+ rowObject.customerCode + ">查看</a>";
     strFromat = strFromat +"&nbsp;<a href='#' onclick='execLock(\""+rowObject.customerCode+"\")' >锁定</a>";
 	return strFromat;
 }
@@ -329,15 +415,42 @@ function execLock(customerCode){
 			// defaultDate: '2014-09-12',
 			editable: true,
 			eventLimit: true,
-			events: [
+			/* events: [
 				{
 					title: 'All Day Event',
 					url: '/crm_web/schedule/scheduleDetail?scheduleId='+19,
 					start: '2016-10-01 16:00:00',
 					end: '2016-10-02 16:00:00'
 				}
-			],
-			droppable: false
+			], */
+			droppable: false,
+			events:function(start, end, timezone, callback) {    
+		    	//var viewStart = $.fullCalendar.formatDate(view.start,"yyyy-MM-dd HH:mm:ss");  
+		        //var viewEnd = $.fullCalendar.formatDate(view.end,"yyyy-MM-dd HH:mm:ss");
+		        //$("#calendar").fullCalendar('removeEvents');    
+		        $.ajax({
+		        	url:'${scheduleUrl}',
+		        	type:"POST",
+		        	async:false,
+		    		success:function(response, postdata) {
+		    			$("#calendar").fullCalendar('removeEvents');    
+		    			for(var i=0;i<response.length;i++) {    
+		            		var obj = new Object();    
+		                   	//obj.id = response[i].id;    
+		                   	obj.title = response[i].scheduleTitle;  
+		                   	obj.url="/crm_web/schedule/scheduleDetail?scheduleId="+response[i].scheduleId; 
+		                   	//obj.description = data[i].description;            
+		                   	//obj.color = data[i].color;  
+		                   	//obj.remindertime = $.fullCalendar.parseDate(data[i].remindertime);  
+		                   	//obj.messagenotice = data[i].messagenotice;  
+		                   //	obj.description = data[i].description;  
+		                   	obj.start = response[i].scheduleStartTime;                   
+		                   	obj.end = response[i].scheduleEndTime;   
+		                   $("#calendar").fullCalendar('renderEvent',obj,true);                     
+		               } 
+		    		}
+		        }); //把从后台取出的数据进行封装以后在页面上以fullCalendar的方式进行显示  
+		    }
 		});
 	});
 </script>

@@ -20,6 +20,8 @@ public class RoleDto implements Serializable {
 	
 	/** 角色所对应的菜单 */
 	private List<MenuDto> menuList;
+	
+	private String selMenus;
 
 	public String getRoleCode() {
 		return roleCode;
@@ -51,5 +53,13 @@ public class RoleDto implements Serializable {
 
 	public void setMenuList(List<MenuDto> menuList) {
 		this.menuList = menuList;
+	}
+
+	public String getSelMenus() {
+		return selMenus;
+	}
+
+	public void setSelMenus(String selMenus) {
+		this.selMenus = selMenus;
 	}
 }

@@ -20,7 +20,8 @@ public class RecordMapper {
 		dto.setRecordResult(record.getRecordResult());
 		dto.setRecordPhone(record.getRecordPhone());
 		dto.setRecordAddress(record.getRecordAddress());
-		dto.setRecordTime(DateUtils.formatDateByDet(record.getRecordTime()));
+		dto.setRecordTime(DateUtils.formatDate(record.getRecordTime()));
+		dto.setRecordNTime(record.getRecordNTime());
 		dto.setRecordComment(record.getRecordComment());
 
 		if(record.getRecordCustomer() !=null){

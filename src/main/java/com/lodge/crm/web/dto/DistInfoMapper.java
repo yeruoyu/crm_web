@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 
 import com.lodge.crm.core.entity.hibernate.DistInfo;
-import com.lodge.crm.core.entity.hibernate.Menu;
 
 public class DistInfoMapper {
 	public static DistInfoDto map(DistInfo distInfo) {

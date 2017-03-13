@@ -43,8 +43,8 @@ public class CustomerContractController {
 			@RequestParam(value = "customerCode", required = false) String customerCode) {
 
 		Pageable pageRequest = null;
+		Sort sort = null;
 		if (sidx != null && !sidx.equals("")) {
-			Sort sort = null;
 			if (sord.equals("desc")) {
 				sort = new Sort(Sort.Direction.DESC, sidx);
 			} else {
@@ -77,14 +77,12 @@ public class CustomerContractController {
 		Customer customer = new Customer();
 		customer.setCustomerCode(custCode);
 		CustomerContract custContract = new CustomerContract();
-
-		
 		custContract.setComments(comments);
 		custContract.setContractCode(contractCode);
 		custContract.setCustomer(customer);
 		custContract.setSignedTime(DateUtils.parseTimestamp(signedTime));
-		
 		Boolean result = customerContractService.create(custContract);
+
 		return new StatusResponse(result);
 	}
 	

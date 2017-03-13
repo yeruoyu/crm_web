@@ -17,11 +17,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.lodge.crm.core.entity.hibernate.Customer;
 import com.lodge.crm.core.entity.hibernate.CustomerRecord;
+import com.lodge.crm.core.entity.hibernate.Schedule;
 import com.lodge.crm.core.entity.hibernate.User;
+import com.lodge.crm.core.service.CustomerService;
 import com.lodge.crm.core.service.RecordService;
+import com.lodge.crm.core.service.ScheduleService;
 import com.lodge.crm.core.util.DateUtils;
 import com.lodge.crm.web.dto.RecordDto;
 import com.lodge.crm.web.dto.RecordMapper;
+import com.lodge.crm.web.dto.ScheduleMapper;
 import com.lodge.crm.web.response.JqgridResponse;
 import com.lodge.crm.web.response.StatusResponse;
 
@@ -31,6 +35,10 @@ public class CustomerRecordController {
 
 	@Autowired
 	RecordService recordService;
+	@Autowired
+	CustomerService customerService;
+	@Autowired
+	ScheduleService scheduleService;
 	
 	/**
 	 * 显示客户联系记录信息
@@ -97,28 +105,35 @@ public class CustomerRecordController {
 			@RequestParam String customerCode,
 			@RequestParam String recordType,
 			@RequestParam String recordTime,
+			@RequestParam String recordNTime,
 			@RequestParam String recordComment,
-			@RequestParam String recordPhone,
-			@RequestParam String recordResult,
-			@RequestParam String recordAddress,
-			@RequestParam String recordName) {
+			//@RequestParam String recordPhone,
+			@RequestParam String recordResult
+			//@RequestParam String recordAddress,
+			//@RequestParam String recordName
+			) {
 			User user= (User)request.getSession().getAttribute("user");
 			CustomerRecord entity = new CustomerRecord();
-			Customer customer = new Customer();
-			customer.setCustomerCode(custCode);
-			entity.setRecordName(recordName);
+			Customer customer = customerService.findOne(custCode);
+			customer.setLastContactTime(DateUtils.parseDate(recordTime));
+			
+			//entity.setRecordName(recordName);
 			entity.setRecordCustomer(customer);
 			entity.setRecordType(recordType);
-			entity.setRecordTime(DateUtils.parseTimestampHour(recordTime));
+			entity.setRecordTime(DateUtils.parseTimestamp(recordTime));
+			entity.setRecordNTime(recordNTime);
 			entity.setRecordComment(recordComment);
-			entity.setRecordPhone(recordPhone);
+			//entity.setRecordPhone(recordPhone);
 			entity.setRecordResult(recordResult);
-			entity.setRecordAddress(recordAddress);
+			//entity.setRecordAddress(recordAddress);
 		
 		
 			entity.setRecordUser(user);
 			Boolean result = recordService.create(entity);
-	
+			result = customerService.update(customer);
+			if(recordNTime!=null && !recordNTime.isEmpty()){
+				this.newSchedule(custCode, entity, user); //增加一条活动日程
+			}
 			return new StatusResponse(result);
 		
 	}
@@ -143,29 +158,48 @@ public class CustomerRecordController {
 			@RequestParam String customerCode,
 			@RequestParam String recordType,
 			@RequestParam String recordTime,
+			@RequestParam String recordNTime,
 			@RequestParam String recordComment,
-			@RequestParam String recordPhone,
-			@RequestParam String recordResult,
-			@RequestParam String recordAddress,
-			@RequestParam String recordName) {
+			// @RequestParam String recordPhone,
+			@RequestParam String recordResult
+			// @RequestParam String recordAddress,
+			//@RequestParam String recordName
+			) {
 		
 			User user= (User)request.getSession().getAttribute("user");
 			CustomerRecord entity = new CustomerRecord();
 			Customer customer = new Customer();
 			customer.setCustomerCode(customerCode);
 			entity.setRecordId(recordId);
-			entity.setRecordName(recordName);
+			//entity.setRecordName(recordName);
 			entity.setRecordCustomer(customer);
 			entity.setRecordType(recordType);
-			entity.setRecordTime(DateUtils.parseTimestampHour(recordTime));
+			entity.setRecordTime(DateUtils.parseTimestamp(recordTime));
+			entity.setRecordNTime(recordNTime);
 			entity.setRecordComment(recordComment);
-			entity.setRecordPhone(recordPhone);
+			//entity.setRecordPhone(recordPhone);
 			entity.setRecordResult(recordResult);
-			entity.setRecordAddress(recordAddress);
+			//entity.setRecordAddress(recordAddress);
 		
 			entity.setRecordUser(user);
 			Boolean result = recordService.update(entity);
-	
+			
 			return new StatusResponse(result);
+	}
+	
+	private void newSchedule(String customerCode,CustomerRecord record,User user){
+		Schedule schedule = new Schedule();
+		
+		schedule.setScheduleType("HFRC");
+		schedule.setScheduleTitle("客户["+customerCode+"]回访");
+		schedule.setScheduleDetail("客户["+customerCode+"]回访");
+		schedule.setScheduleStartTime(DateUtils.parseTimestamp(record.getRecordNTime()));
+		schedule.setScheduleEndTime(DateUtils.parseTimestamp(record.getRecordNTime()));
+		schedule.setScheduleStatus(1);
+		schedule.setCreateUser(user);
+		schedule.setScheduleUser(user);
+		schedule.setCreateTime(DateUtils.getCurrentTimeStamp());
+		
+		scheduleService.create(schedule);
 	}
 }

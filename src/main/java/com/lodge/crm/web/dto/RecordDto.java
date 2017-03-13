@@ -12,6 +12,8 @@ public class RecordDto implements Serializable{
 	
 	private String recordTime;
 	
+	private String recordNTime;
+	
 	private String recordResult;
 	
 	private String recordComment;
@@ -124,6 +126,14 @@ public class RecordDto implements Serializable{
 
 	public void setRecordName(String recordName) {
 		this.recordName = recordName;
+	}
+
+	public String getRecordNTime() {
+		return recordNTime;
+	}
+
+	public void setRecordNTime(String recordNTime) {
+		this.recordNTime = recordNTime;
 	}
 	
 	

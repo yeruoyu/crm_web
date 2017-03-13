@@ -3,11 +3,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<!-- 日程信息 -->
-<c:url value="/schedule/saveSchedule" var="saveSchedule"/>
-<c:url value="/schedule/myScheduleList" var="scheduleList"/>
-<c:url value="/index" var="homeUrl"/>
-
+<!-- 公告信息 -->
+<c:url value="/publish/saveNewPublish" var="saveNewPublish"/>
+<c:url value="/publish/publishList" var="publishList"/>
 
 <html lang="en">
 <head>
@@ -41,10 +39,10 @@
 							<a href="<c:url value='/index'/>"><i class="fa-home"></i>首页</a>
 						</li>
 						<li>
-							<a href="<c:url value='/customer/customerList'/>">日程管理</a>
+							<a href="<c:url value='/customer/customerList'/>">公告管理</a>
 						</li>
 						<li class="active">
-							<strong>日程信息</strong>
+							<strong>添加公告</strong>
 						</li>
 					</ol>		
 				</div>
@@ -55,7 +53,7 @@
 				<div class="col-md-12">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<h3 class="panel-title">添加日程</h3>
+							<h3 class="panel-title">添加公告</h3>
 							<div class="panel-options">
 								<a href="#" data-toggle="panel">
 									<span class="collapse-icon">&ndash;</span>
@@ -65,124 +63,40 @@
 						</div>
 						<div class="panel-body">
 							<!-- Content -->
-							<form role="form" id="scheduleForm" class="form-horizontal">
+							<form role="form" id="publishForm" class="form-horizontal">
+								<input type="hidden" name="publishId" id="publishId" value="${publishDto.publishId}"/>
 								<div class="form-group">
-									<label class="col-sm-2 control-label" for="field-1">日程类型</label>
+									<label class="col-sm-2 control-label" for="field-1">公告标题</label>
 									<div class="col-sm-6">
-										<select  id="scheduleType" name="scheduleType" readonly="readonly" value="${scheduleDto.scheduleType}" class="form-control">
-											<c:forEach items="${scheduleTypeDtos}" var="scheduleType">
-												<c:if test="${scheduleDto.scheduleType==scheduleType.distCode}">
-													<option value="${scheduleType.distCode}" selected="selected">${scheduleType.distValue }</option>
-												</c:if>
-												<c:if test="${scheduleDto.scheduleType!=scheduleType.distCode}">
-													<option value="${scheduleType.distCode}">${scheduleType.distValue }</option>
-												</c:if>
-											</c:forEach>
-										</select>
+										<input type="text" class="form-control" value="${publishDto.publishTitle }" id="publishTitle" name="publishTitle" placeholder="公告标题">
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-2 control-label" for="field-1">日程标题</label>
-									
+									<label class="col-sm-2 control-label" for="field-1">公告内容</label>
 									<div class="col-sm-6">
-										<input type="text" class="form-control" value="${scheduleDto.scheduleTitle}" readonly="readonly" id="scheduleTitle" name="scheduleTitle">
+										<textarea class="form-control" id="publishDetail" name="publishDetail" rows="3" placeholder="请填写公告内容">${publishDto.publishDetail }</textarea>
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-2 control-label" for="field-1">日程执行人</label>
+									<label class="col-sm-2 control-label" for="field-1">公告状态</label>
 									<div class="col-sm-6">
-										<input type="hidden" value="${scheduleDto.scheduleUserCode}" id="scheduleUserCode" name="scheduleUserCode">
-										<input type="text" class="form-control" value="${scheduleDto.scheduleUserName}" readonly="readonly" id="scheduleUserName" name="scheduleUserName">
-									</div>
-								</div>
-								<div class="form-group">
-									<label class="col-sm-2 control-label" for="field-1">开始时间</label>
-									<div class="col-sm-6">
-										<div class="input-group">
-											<input type="text" class="form-control" readonly="readonly" value="${scheduleDto.scheduleStartTime}">
-											<div class="input-group-addon">
-												<i id="startTime" class="linecons-calendar"></i>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="form-group">
-									<label class="col-sm-2 control-label" for="field-1">结束时间</label>
-									<div class="col-sm-6">
-										<div class="input-group">
-											<input type="text" class="form-control" value="${scheduleDto.scheduleEndTime}" readonly="readonly" >
-											<div class="input-group-addon">
-												<i id="endTime" class="linecons-calendar"></i>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="form-group">
-									<label class="col-sm-2 control-label" for="field-1">日程内容</label>
-									<div class="col-sm-6">
-										<textarea class="form-control" readonly="readonly" rows="3" >${scheduleDto.scheduleDetail}</textarea>
-									</div>
-								</div>
-								<div class="form-group">
-									<label class="col-sm-2 control-label" for="field-1">日程状态</label>
-									<div class="col-sm-6">
-										<select  id="scheduleStatus" name="scheduleStatus" readonly="readonly" value="" class="form-control">
-											<c:if test="${scheduleDto.scheduleStatus==1}">
-													<option value="1" selected="selected">正常</option>
-													<option value="2">取消</option>
-											</c:if>
-											<c:if test="${scheduleDto.scheduleStatus==2}">
-													<option value="1">正常</option>
-													<option value="2" selected="selected">取消</option>
-											</c:if>
-										</select>
-									</div>
-								</div>
-								<div class="form-group">
-									<label class="col-sm-2 control-label" for="tagsinput-1">指定人员</label>	
-									<div class="col-sm-6">
-										
-										<script type="text/javascript">
-											jQuery(document).ready(function($)
-											{
-												$("#multi-select").multiSelect({
-													afterInit: function()
-													{
-														// Add alternative scrollbar to list
-														this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar();
-													},
-													afterSelect: function()
-													{
-														// Update scrollbar size
-														this.$selectableContainer.add(this.$selectionContainer).find('.ms-list').perfectScrollbar('update');
-													}
-												});
-											});
-										</script>
-										<select class="form-control" multiple="multiple" id="multi-select" name="userList">
-											<c:forEach items="${userDtos}" var="user">
-												<c:if test="${currUser.userCode != user.userCode}">
-													<c:if test="${user.subScheduleFlag==1}">
-														<option value="${user.userCode }" selected="selected">${user.userName }</option>
-													</c:if>
-													<c:if test="${user.subScheduleFlag!=1}">
-														<option value="${user.userCode }">${user.userName }</option>
-													</c:if>
-												</c:if>
-											</c:forEach>
+										<select  id="publishStatus" name="publishStatus" value="${publishDto.publishStatus }" class="form-control">
+											<option value="1">有效</option>
+						 					<option value="0">无效</option>
 										</select>
 									</div>
 								</div>
 								<div class="form-group">
 									<div class="col-sm-8">
-										<button type="button" class="btn btn-gray btn-icon pull-right" style="margin-left: 10px" id="backToHome">
-											<i class="fa-share"></i>
-											<span>返回首页</span>
-										</button>
 										<button type="button" class="btn btn-blue btn-icon pull-right" style="margin-left: 10px" id="backToList">
 											<i class="fa-share"></i>
-											<span>返回日程列表</span>
+											<span>返回公告列表</span>
 										</button>
+										<button type="button" class="btn btn-secondary btn-icon pull-right" id="savePublish">
+											<i class="fa-check"></i>
+											<span>保存公告信息</span>
+										</button>
+
 									</div>
 								</div>
 							</form>
@@ -231,15 +145,43 @@ jQuery.prototype.serializeObject=function(){
 <script type='text/ecmascript'>
 	//返回到客户列表
 	$("#backToList").click(function(){
-		var url='${scheduleList}';
+		var url='${publishList}';
 		window.location.href= url;
 	});
 	
-	$("#backToHome").click(function(){
-		var url='${homeUrl}';
-		window.location.href= url;
+	// 保存客户信息
+	$("#savePublish").click(function(){
+		$("#userList").val($('#multi-select').val());
+		
+		var publishDto = $.toJSON($('#publishForm').serializeObject()); //serializeObject
+		$.ajax({
+			url : "${saveNewPublish}",  
+			type : "POST",  
+			datatype:"json",  
+			contentType: "application/json; charset=utf-8",  
+			data : publishDto,  
+			success :function(response, postdata) {
+				var result = response.success;
+				var errors = "";
+				if (result == false) {
+					for (var i = 0; i < response.message.length; i++) {
+						errors += response.message[i] + "<br/>";
+					}
+					$.teninedialog({
+	                    title:'系统提示',
+	                    content:'公告保存失败：'+errors
+	                });
+				} else {
+					$.teninedialog({
+						title:'系统提示',
+						content:'公告保存成功。'
+					});
+					$(".clsEdit").css("display","inline");
+				}
+			}
+		});
 	});
-	
+
 	//$.jgrid.defaults.width = 780;
 	$.jgrid.defaults.responsive = true;
 	$.jgrid.defaults.styleUI = 'Bootstrap';

@@ -44,12 +44,14 @@ public class LoginController {
 		}
 
 		user = userService.findOne(userDto.getUserCode().toUpperCase());
-
+		if(user==null){
+			user = userService.findbyEmailAccount(userDto.getUserCode()+"@%");
+		}
 		if(user!=null 
 				&& user.getUserStatus().equals(Constants._ACTIVE) 
 				&& userDto.getUserPassword().equals(user.getUserPassword())){
 			//List<Menu> menuList = menuService.findByMenuType("menu");
-			List<Menu> menuList = menuService.findByUserCode(user.getUserCode(), "menu");
+			List<Menu> menuList = menuService.findByRoleCode(user.getUserRole().getRoleCode(), "menu");
 
 			request.getSession().setAttribute("user", user);
 			request.getSession().setAttribute("menuList", menuList);

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.lodge.crm.core.entity.hibernate.Customer;
-import com.lodge.crm.core.entity.hibernate.Schedule;
+import com.lodge.crm.core.entity.hibernate.Publish;
 import com.lodge.crm.core.entity.hibernate.User;
 import com.lodge.crm.core.service.CustomerService;
 import com.lodge.crm.core.service.PublishService;
@@ -25,6 +25,8 @@ import com.lodge.crm.core.util.JqgridFilter;
 import com.lodge.crm.core.util.JqgridObjectMapper;
 import com.lodge.crm.web.dto.CustomerDto;
 import com.lodge.crm.web.dto.CustomerMapper;
+import com.lodge.crm.web.dto.PublishDto;
+import com.lodge.crm.web.dto.PublishMapper;
 import com.lodge.crm.web.dto.ScheduleDto;
 import com.lodge.crm.web.dto.ScheduleMapper;
 import com.lodge.crm.web.response.JqgridResponse;
@@ -82,7 +84,7 @@ public class HomeController {
 
 		User user = (User)request.getSession().getAttribute("user");
 		
-		Page<Customer> customers = customerService.findUnlockCustomer(user.getUserCode(), pageRequest);
+		Page<Customer> customers = customerService.findUserCustomer(user.getUserCode(), pageRequest);
 		List<CustomerDto> customerDtos = CustomerMapper.map(customers);
 
 		JqgridResponse<CustomerDto> response = new JqgridResponse<CustomerDto>();
@@ -95,8 +97,33 @@ public class HomeController {
 		return response;
 	}
 	
+	
+	
+	
+	@RequestMapping(value = "/publishRecords", produces = "application/json")
+	public @ResponseBody JqgridResponse<PublishDto> publishRecords(HttpServletRequest request,
+			@RequestParam(value = "page", required = false) Integer page,
+			@RequestParam(value = "rows", required = false) Integer rows) {
+
+		Pageable pageRequest = null;
+		pageRequest = new PageRequest(page - 1, rows);
+		
+		Page<Publish> publishs = publishService.findAllActive(pageRequest);
+		List<PublishDto> publishDtos = PublishMapper.map(publishs);
+
+		JqgridResponse<PublishDto> response = new JqgridResponse<PublishDto>();
+		response.setRows(publishDtos);
+		response.setRecords(Long.valueOf(publishs.getTotalElements()).toString());
+		response.setTotal(Integer.valueOf(publishs.getTotalPages()).toString());
+		response.setPage(Integer.valueOf(publishs.getNumber() + 1).toString());
+
+		return response;
+	}
+	
 	@RequestMapping(value = "/scheduleRecords", produces = "application/json")
-	public @ResponseBody List<ScheduleDto> scheduleRecords(HttpServletRequest request) {
+	public @ResponseBody List<ScheduleDto> scheduleRecords(HttpServletRequest request,
+			@RequestParam(value = "startDate", required = false) String startDate,
+			@RequestParam(value = "endDate", required = false) String endDate) {
 		User user = (User)request.getSession().getAttribute("user");
 
 		JqgridFilter jqgridFilter = new JqgridFilter();;

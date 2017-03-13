@@ -3,15 +3,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
+<!-- 日程信息 -->
+<c:url value="/user/saveUser" var="saveUserUrl" />
+<c:url value="/user/resetPassword" var="resetPasswordUrl" />
 <c:url value="/user/userList" var="userListUrl" />
-<c:url value="/user/custRecords" var="custRecordsUrl" />
-<c:url value="/user/recRecords" var="recRecordsUrl" />
 
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>CRM系统</title>
-	
+
 <link rel="stylesheet" type="text/css" media="screen" href='<c:url value="/resources/css/fonts/linecons/css/linecons.css"/>' />
 <link rel="stylesheet" type="text/css" media="screen" href='<c:url value="/resources/css/fonts/fontawesome/css/font-awesome.min.css"/>' />
 <link rel="stylesheet" type="text/css" media="screen" href='<c:url value="/resources/bootstrap/css/bootstrap.min.css"/>' />
@@ -24,7 +25,6 @@
 <link rel="stylesheet" type="text/css" media="screen" href='<c:url value="/resources/datetimepicker/css/bootstrap-datetimepicker.min.css"/>' />
 
 <script type='text/ecmascript' src='<c:url value="/resources/js/jquery-1.11.0.min.js"/>'></script>
-
 </head>
 <body class="page-body">
 	<div class="page-container">
@@ -42,88 +42,77 @@
 							<a href="<c:url value='/user/userList'/>">员工管理</a>
 						</li>
 						<li class="active">
-							<strong>员工基本信息</strong>
+							<strong>添加员工</strong>
 						</li>
 					</ol>		
 				</div>
 			</div>
-			<!-- Content Panel 员工基本信息 -->
+			<!-- Content Panel -->
 			<div class="row">
 				<div class="col-md-12">
-				
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<h3 class="panel-title">员工基本信息</h3>
-							<div class="panel-options">
-								<a href="#" data-toggle="panel">
-									<span class="collapse-icon">&ndash;</span>
-									<span class="expand-icon">+</span>
-								</a>
-							</div>
+							<h3 class="panel-title">添加员工</h3>
 						</div>
 						<div class="panel-body">
 							<!-- Content -->
-							<form role="form" class="form-horizontal">
+							<form role="form" id="userForm" class="form-horizontal">
 								<div class="form-group">
-									<label class="col-sm-2 control-label" for="field-1">员工代码</label>
-									
+									<label class="col-sm-2 control-label" for="field-1">员工工号</label>
 									<div class="col-sm-6">
-										<input type="text" class="form-control" value="${userDto.userCode }" id="userCode" readonly="readonly"  placeholder="Placeholder">
+										<input type="text" class="form-control" id="userCode" name="userCode" readonly="readonly" value="${userDto.userCode}" placeholder="请输入员工工号">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label" for="field-1">员工姓名</label>
-									
 									<div class="col-sm-6">
-										<input type="text" class="form-control" value="${userDto.userName }" id="userName" readonly="readonly"  placeholder="Placeholder">
+										<input type="text" class="form-control" id="userName" name="userName" value="${userDto.userName}" placeholder="请输入员工姓名">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label" for="field-1">联系电话</label>
 									
 									<div class="col-sm-6">
-										<input type="text" class="form-control" value="${userDto.userPhone }" id="userPhone" readonly="readonly" placeholder="Placeholder">
+										<input type="text" class="form-control" id="userPhone"  name="userPhone" value="${userDto.userPhone}" placeholder="请输入联系电话">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label" for="field-1">联系手机</label>
 									
 									<div class="col-sm-6">
-										<input type="text" class="form-control" value="${userDto.userMobile }" id="userMobile" readonly="readonly" placeholder="Placeholder">
+										<input type="text" class="form-control" id="userMobile" name="userMobile" value="${userDto.userMobile}" placeholder="请输入联系手机">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label" for="field-1">Email</label>
 									
 									<div class="col-sm-6">
-										<input type="text" class="form-control" value="${userDto.userEmail }" id="userEmail" readonly="readonly" placeholder="Placeholder">
+										<input type="text" class="form-control" id="userEmail" name="userEmail" value="${userDto.userEmail}" placeholder="请输入Email">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label" for="field-1">联系地址</label>
 									
 									<div class="col-sm-6">
-										<input type="text" class="form-control" value="${userDto.userAddress }" id="userAddress" readonly="readonly" placeholder="Placeholder">
+										<input type="text" class="form-control" id="userAddress" name="userAddress" value="${userDto.userAddress}" placeholder="请输入联系地址">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label" for="field-1">QQ号</label>
-									
 									<div class="col-sm-6">
-										<input type="text" class="form-control" value="${userDto.userQq }" id="userQq"  readonly="readonly"placeholder="Placeholder">
+										<input type="text" class="form-control" id="userQq" name="userQq" value="${userDto.userQq}" placeholder="请输入QQ号">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label" for="field-1">微信号</label>
-									
 									<div class="col-sm-6">
-										<input type="text" class="form-control" value="${userDto.userWebchat }" id="userWebchat" readonly="readonly" placeholder="Placeholder">
+										<input type="text" class="form-control" id="userWebchat" name="userWebchat" value="${userDto.userWebchat}" placeholder="请输入微信号">
 									</div>
 								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label" for="roleCode">员工角色</label>
 									<div class="col-sm-6">
-										<select id="roleCode" name="roleCode" class="form-control" readonly="readonly">
+										<select id="roleCode" name="roleCode" class="form-control">
 											<option value="">无</option>
 											<c:forEach items="${roleList}" var="role">
 												<c:if test="${role.roleCode==userDto.roleCode }">
@@ -137,7 +126,7 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-2 control-label" for="userLevel" readonly="readonly">员工级别</label>
+									<label class="col-sm-2 control-label" for="userLevel">员工级别</label>
 									<div class="col-sm-6">
 										<select id="userLevel" name="userLevel" class="form-control">
 											<c:forEach items="${levelList}" var="level">
@@ -152,7 +141,7 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-2 control-label" for="pUserCode" readonly="readonly">上级主管</label>
+									<label class="col-sm-2 control-label" for="pUserCode">上级主管</label>
 									<div class="col-sm-6">
 										<select id="pUserCode" name="pUserCode" class="form-control">
 											<option value="">无</option>
@@ -168,7 +157,7 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-2 control-label" for="groupCode" readonly="readonly">所属团队</label>
+									<label class="col-sm-2 control-label" for="groupCode">所属团队</label>
 									<div class="col-sm-6">
 										<select id=""groupCode"" name="groupCode" class="form-control">
 											<c:forEach items="${groupList}" var="group">
@@ -183,7 +172,7 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-2 control-label" for="salesFlag" readonly="readonly">是否是销售</label>
+									<label class="col-sm-2 control-label" for="salesFlag">是否是销售</label>
 									<div class="col-sm-6">
 										<select id="salesFlag" name="salesFlag" class="form-control">
 											<c:if test="${userDto.salesFlag==1 }">
@@ -198,13 +187,13 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-2 control-label" for="userMax" readonly="readonly">最大锁定客户数</label>
+									<label class="col-sm-2 control-label" for="userMax">最大锁定客户数</label>
 									<div class="col-sm-6">
 										<input type="text" class="form-control" id="userMax" name="userMax" value="${userDto.userMax}" placeholder="请输入最大锁定客户数">
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-2 control-label" for="userStatus" readonly="readonly">员工状态</label>
+									<label class="col-sm-2 control-label" for="userStatus">员工状态</label>
 									<div class="col-sm-6">
 										<select id="userStatus" name="userStatus" class="form-control">
 											<c:if test="${userDto.userStatus==0 }">
@@ -224,6 +213,14 @@
 											<i class="fa-share"></i>
 											<span>返回员工列表</span>
 										</button>
+										<button type="button" class="btn btn-secondary btn-icon pull-right" id="resetPassword">
+											<i class="fa-check"></i>
+											<span>初始化密码</span>
+										</button>
+										<button type="button" class="btn btn-secondary btn-icon pull-right" id="saveUser">
+											<i class="fa-check"></i>
+											<span>保存员工信息</span>
+										</button>
 									</div>
 								</div>
 							</form>
@@ -231,60 +228,14 @@
 					</div>
 				</div>
 			</div>
-			<c:if test="${showDetailFlag ==1 }"> <!-- 自己或者上级可看 -->
-				<!-- Content Panel 客户资源信息 -->
-				<div class="row">
-					<div class="col-md-12">
-					
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<h3 class="panel-title">员工客户信息列表</h3>
-								<div class="panel-options">
-									<a href="#" data-toggle="panel">
-										<span class="collapse-icon">&ndash;</span>
-										<span class="expand-icon">+</span>
-									</a>
-								</div>
-							</div>
-							<div class="panel-body">
-								<!-- Content -->
-								<div id="jgrid">
-									<table id='custGrid' ></table>
-									<div id='custPager'></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!-- Content Panel 客户资源信息 -->
-				<div class="row">
-					<div class="col-md-12">
-					
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<h3 class="panel-title">员工联系记录列表</h3>
-								<div class="panel-options">
-									<a href="#" data-toggle="panel">
-										<span class="collapse-icon">&ndash;</span>
-										<span class="expand-icon">+</span>
-									</a>
-								</div>
-							</div>
-							<div class="panel-body">
-								<!-- Content -->
-								<div id="jgrid">
-									<table id='recordGrid' ></table>
-									<div id='recordPager'></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</c:if>
+			
 			<jsp:include page="../common/footer.jsp"/>
 		</div>
 	</div>
 </body>
+
+<link rel="stylesheet" type="text/css" media="screen" href='<c:url value="/resources/js/multiselect/css/multi-select.css"/>' />
+
 <!-- Bottom Scripts -->
 <script type="text/ecmascript" src='<c:url value="/resources/bootstrap/js/bootstrap.min.js"/>'></script>
 <script type='text/ecmascript' src='<c:url value="/resources/js/TweenMax.min.js"/>'></script>
@@ -293,8 +244,7 @@
 <script type='text/ecmascript' src='<c:url value="/resources/js/xenon-api.js"/>'></script>
 <script type='text/ecmascript' src='<c:url value="/resources/js/xenon-toggles.js"/>'></script>
 <script type='text/ecmascript' src='<c:url value="/resources/js/xenon-custom.js"/>'></script>
-
-
+<script type='text/ecmascript' src='<c:url value="/resources/js/jquery.json-2.4.js"/>'></script>
 <script type='text/ecmascript' src='<c:url value="/resources/jqgrid/js/i18n/grid.locale-cn.js"/>'></script>
 <script type='text/ecmascript' src='<c:url value="/resources/jqgrid/js/jquery.jqGrid.js"/>'></script>
 
@@ -302,242 +252,91 @@
 <script type='text/ecmascript' src='<c:url value="/resources/datetimepicker/js/locales/bootstrap-datetimepicker.fr.js"/>'></script>
 
 <script type="text/ecmascript" src='<c:url value="/resources/bootstrap/js/bootstrap3-typeahead.js"/>'></script>
-<script type="text/ecmascript" src='<c:url value="/resources/bootstrap/js/jquery.bootstrap.teninedialog.v3.js"/>'></script>	
-
-<script type='text/ecmascript'>
-	//$.jgrid.defaults.width = 780;
-	$.jgrid.defaults.responsive = true;
-	$.jgrid.defaults.styleUI = 'Bootstrap';
+<script type="text/ecmascript" src='<c:url value="/resources/bootstrap/js/jquery.bootstrap.teninedialog.v3.js"/>'></script>
+<script type="text/ecmascript" src='<c:url value="/resources/js/multiselect/js/jquery.multi-select.js"/>'></script>
+<script type="text/javascript">
+jQuery.prototype.serializeObject=function(){  
+    var obj=new Object();  
+    $.each(this.serializeArray(),function(index,param){  
+        if(!(param.name in obj)){  
+            obj[param.name]=param.value;  
+        }  
+    });  
+    return obj;  
+};  
 </script>
+
 <script type='text/ecmascript'>
 	//返回到客户列表
 	$("#backToList").click(function(){
 		var url='${userListUrl}';
 		window.location.href= url;
 	});
-</script>
-
-<script type='text/ecmascript'>
-$(function() {
-	$.jgrid.styleUI.Bootstrap.base.rowTable = "table table-bordered table-striped";
-		
-	$("#custGrid").jqGrid({
-		url : '${custRecordsUrl}'+'?userCode='+$('#userCode').val(),
-		datatype : 'json',
-		mtype : 'GET',
-		colModel : [{
-			index : 'customerCode',
-			name : 'customerCode',
-			label : '客户代码',
-			width : 100,
-			editable : false
-			
-		}, {
-			name : 'customerName',
-			index : 'customerName',
-			label : '客户姓名',
-			width : 100,
-			editable : false
-		}, {
-			name : 'phone',
-			index : 'phone',
-			label : '联系电话',
-			width : 100,
-			editable : false
-		}, {
-			name : 'mobile',
-			index : 'mobile',
-			label : '手机',
-			width : 100,
-			editable : false
-		}, {
-			name : 'customerStatus',
-			index : 'customerStatus',
-			label : '客户状态',
-			width : 80,
-			editable : false
-		}, {
-			name : 'customerLevel',
-			index : 'customerLevel',
-			label : '客户级别',
-			width : 80,
-			editable : false
-		}, {
-			name : 'customerSource',
-			index : 'customerSource',
-			label : '客户来源',
-			width : 80,
-			editable : false
-		}],
-		postData : {},
-		rowNum : 5,
-		rowList : [ 5, 10, 20, 40, 60 ],
-		height : 200,
-		autowidth : true,
-		rownumbers : false,
-		pager : '#custPager',
-		sortname : 'customerCode',
-		viewrecords : true,
-		sortable : true,
-		loadonce : false,
-		sortorder : "asc",
-		emptyrecords : "空记录",
-		loadComplete : function() {
-			jQuery("#custGrid").trigger("reloadGrid");
-		},
-		jsonReader : {
-			root : "rows",
-			page : "page",
-			total : "total",
-			records : "records",
-			repeatitems : false,
-			cell : "cell",
-			id : "id"
-		},
-		onSortCol : function(index, colindex, sortorder) {
-		},
-
+	
+	//重置密码
+	$("#resetPassword").click(function(){
+		var userDto = $.toJSON($('#userForm').serializeObject()); //serializeObject
+		$.ajax({
+			url : "${resetPasswordUrl}",  
+			type : "POST",  
+			datatype:"json",  
+			contentType: "application/json; charset=utf-8",  
+			data : userDto,  
+			success :function(response, postdata) {
+				var result = response.success;
+				var errors = "";
+				if (result == false) {
+					for (var i = 0; i < response.message.length; i++) {
+						errors += response.message[i] + "<br/>";
+					}
+					$.teninedialog({
+	                    title:'系统提示',
+	                    content:'初始化密码失败：'+errors
+	                });
+				} else {
+					$.teninedialog({
+						title:'系统提示',
+						content:'初始化密码成功。'
+					});
+					$(".clsEdit").css("display","inline");
+				}
+			}
+		});
+	});	
+	
+	// 保存客户信息
+	$("#saveUser").click(function(){
+		var userDto = $.toJSON($('#userForm').serializeObject()); //serializeObject
+		$.ajax({
+			url : "${saveUserUrl}",  
+			type : "POST",  
+			datatype:"json",  
+			contentType: "application/json; charset=utf-8",  
+			data : userDto,  
+			success :function(response, postdata) {
+				var result = response.success;
+				var errors = "";
+				if (result == false) {
+					for (var i = 0; i < response.message.length; i++) {
+						errors += response.message[i] + "<br/>";
+					}
+					$.teninedialog({
+	                    title:'系统提示',
+	                    content:'员工保存失败：'+errors
+	                });
+				} else {
+					$.teninedialog({
+						title:'系统提示',
+						content:'员工保存成功。'
+					});
+					$(".clsEdit").css("display","inline");
+				}
+			}
+		});
 	});
 
-	$("#custGrid").jqGrid('navGrid', '#custPager', {
-		edit : false,
-		add : false,
-		del : false,
-		search : false,
-		refresh : true,
-		view : true,
-		position : "left",
-		cloneToTop : false
-	}, {}, {}, {}, { // search
-		sopt : [ 'cn', 'eq', 'ne', 'lt', 'gt', 'bw', 'ew' ],
-		closeOnEscape : true,
-		multipleSearch : true,
-		closeAfterSearch : true
-	});
-
-	// Toolbar Search
-	$("#custGrid").jqGrid('filterToolbar', {
-		stringResult : true,
-		searchOnEnter : true,
-		defaultSearch : "cn"
-	});
-});
-
-
-</script>
-
-<script type='text/ecmascript'>
-$(function() {
-	$.jgrid.styleUI.Bootstrap.base.rowTable = "table table-bordered table-striped";
-		
-	$("#recordGrid").jqGrid({
-		url : '${recRecordsUrl}'+'?userCode='+$('#userCode').val(),
-		datatype : 'json',
-		mtype : 'GET',
-		colModel : [ {
-			index : 'recordId',
-			name : 'recordId',
-			label : '联系ID',
-			hidden:true,
-			width : 55,
-			key : true,
-			editable : false
-		}, {
-			name : 'customerName',
-			index : 'customerName',
-			label : '联系客户',
-			width : 80,
-			editable : false
-		}, {
-			index : 'recordType',
-			name : 'recordType',
-			label : '联系类型',
-			width : 100,
-			editable : false
-			
-		}, {
-			name : 'recordTime',
-			index : 'recordTime',
-			label : '联系时间',
-			width : 100,
-			editable : false
-		}, {
-			name : 'recordResult',
-			index : 'recordResult',
-			label : '联系结果',
-			width : 100,
-			editable : false
-		}, {
-			name : 'recordComment',
-			index : 'recordComment',
-			label : '备注',
-			width : 100,
-			editable : false
-		}, {
-			name : 'recordPhone',
-			index : 'recordPhone',
-			label : '联系电话',
-			width : 80,
-			editable : false
-		}, {
-			name : 'recordAddress',
-			index : 'recordAddress',
-			label : '联系地址',
-			width : 80,
-			editable : false
-		}],
-		postData : {},
-		rowNum : 5,
-		rowList : [ 5, 10, 20, 40, 60 ],
-		height : 200,
-		autowidth : true,
-		rownumbers : false,
-		pager : '#recordPager',
-		sortname : 'recordId',
-		viewrecords : true,
-		sortable : true,
-		loadonce : false,
-		sortorder : "asc",
-		emptyrecords : "空记录",
-		loadComplete : function() {
-			jQuery("#recordGrid").trigger("reloadGrid");
-		},
-		jsonReader : {
-			root : "rows",
-			page : "page",
-			total : "total",
-			records : "records",
-			repeatitems : false,
-			cell : "cell",
-			id : "id"
-		},
-		onSortCol : function(index, colindex, sortorder) {
-		},
-
-	});
-
-	$("#recordGrid").jqGrid('navGrid', '#recordPager', {
-		edit : false,
-		add : false,
-		del : false,
-		search : false,
-		refresh : true,
-		view : true,
-		position : "left",
-		cloneToTop : false
-	}, {}, {}, {}, { // search
-		sopt : [ 'cn', 'eq', 'ne', 'lt', 'gt', 'bw', 'ew' ],
-		closeOnEscape : true,
-		multipleSearch : true,
-		closeAfterSearch : true
-	});
-
-	// Toolbar Search
-	$("#recordGrid").jqGrid('filterToolbar', {
-		stringResult : true,
-		searchOnEnter : true,
-		defaultSearch : "cn"
-	});
-});
+	//$.jgrid.defaults.width = 780;
+	$.jgrid.defaults.responsive = true;
+	$.jgrid.defaults.styleUI = 'Bootstrap';
 </script>
 </html>

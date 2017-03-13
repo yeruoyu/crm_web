@@ -13,6 +13,8 @@ public class UserDto implements Serializable {
 	
 	private String userPassword;
 	
+	private String userNewPassword;
+	
 	private String userPhone;
 	
 	private String userMobile;
@@ -28,6 +30,24 @@ public class UserDto implements Serializable {
 	private Integer userStatus;
 	
 	private Integer subScheduleFlag;
+	
+	private Integer userLevel;
+	
+	private Integer userMax;
+	
+	private String roleCode;
+	
+	private String roleName;
+	
+	private String pUserCode;
+	
+	private String pUserName;
+	
+	private Integer salesFlag;
+	
+	private String groupCode;
+	
+	private String groupName;
 	
 	private List<SchoolDto> schoolList;
 	
@@ -125,5 +145,85 @@ public class UserDto implements Serializable {
 
 	public void setSubScheduleFlag(Integer subScheduleFlag) {
 		this.subScheduleFlag = subScheduleFlag;
+	}
+
+	public Integer getUserLevel() {
+		return userLevel;
+	}
+
+	public void setUserLevel(Integer userLevel) {
+		this.userLevel = userLevel;
+	}
+
+	public Integer getUserMax() {
+		return userMax;
+	}
+
+	public void setUserMax(Integer userMax) {
+		this.userMax = userMax;
+	}
+
+	public String getRoleCode() {
+		return roleCode;
+	}
+
+	public void setRoleCode(String roleCode) {
+		this.roleCode = roleCode;
+	}
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+
+	public String getpUserCode() {
+		return pUserCode;
+	}
+
+	public void setpUserCode(String pUserCode) {
+		this.pUserCode = pUserCode;
+	}
+
+	public String getpUserName() {
+		return pUserName;
+	}
+
+	public void setpUserName(String pUserName) {
+		this.pUserName = pUserName;
+	}
+
+	public Integer getSalesFlag() {
+		return salesFlag;
+	}
+
+	public void setSalesFlag(Integer salesFlag) {
+		this.salesFlag = salesFlag;
+	}
+
+	public String getGroupCode() {
+		return groupCode;
+	}
+
+	public void setGroupCode(String groupCode) {
+		this.groupCode = groupCode;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+
+	public String getUserNewPassword() {
+		return userNewPassword;
+	}
+
+	public void setUserNewPassword(String userNewPassword) {
+		this.userNewPassword = userNewPassword;
 	}
 }

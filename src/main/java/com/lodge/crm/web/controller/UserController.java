@@ -12,24 +12,40 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.lodge.crm.core.common.Constants;
+import com.lodge.crm.core.entity.hibernate.Channel;
 import com.lodge.crm.core.entity.hibernate.Customer;
 import com.lodge.crm.core.entity.hibernate.CustomerRecord;
+import com.lodge.crm.core.entity.hibernate.Group;
+import com.lodge.crm.core.entity.hibernate.Role;
 import com.lodge.crm.core.entity.hibernate.User;
 import com.lodge.crm.core.service.CustomerService;
+import com.lodge.crm.core.service.DistInfoService;
+import com.lodge.crm.core.service.GroupService;
 import com.lodge.crm.core.service.RecordService;
+import com.lodge.crm.core.service.RoleService;
 import com.lodge.crm.core.service.TableKeyService;
 import com.lodge.crm.core.service.UserService;
 import com.lodge.crm.core.util.JqgridFilter;
 import com.lodge.crm.core.util.JqgridObjectMapper;
+import com.lodge.crm.web.dto.ChannelDto;
+import com.lodge.crm.web.dto.ChannelMapper;
 import com.lodge.crm.web.dto.CustomerDto;
 import com.lodge.crm.web.dto.CustomerMapper;
+import com.lodge.crm.web.dto.DistInfoDto;
+import com.lodge.crm.web.dto.DistInfoMapper;
+import com.lodge.crm.web.dto.GroupDto;
+import com.lodge.crm.web.dto.GroupMapper;
 import com.lodge.crm.web.dto.RecordDto;
 import com.lodge.crm.web.dto.RecordMapper;
+import com.lodge.crm.web.dto.RoleDto;
+import com.lodge.crm.web.dto.RoleMapper;
 import com.lodge.crm.web.dto.UserDto;
 import com.lodge.crm.web.dto.UserMapper;
 import com.lodge.crm.web.response.JqgridResponse;
@@ -43,6 +59,12 @@ public class UserController {
 	UserService userService;
 	
 	@Autowired
+	RoleService roleService;
+	
+	@Autowired
+	DistInfoService distInfoService;
+	
+	@Autowired
 	CustomerService customerService;
 	
 	@Autowired
@@ -50,6 +72,9 @@ public class UserController {
 	
 	@Autowired
 	TableKeyService tableKeyService;
+	
+	@Autowired
+	GroupService groupService;
 	
 	/**
 	 * 跳转到用户信息列表页面
@@ -60,9 +85,240 @@ public class UserController {
 		return "/user/userList";
 	}
 	
-	public String gotoMyCustomerList(){
-		return "/customer/myCustomerList";
+	@RequestMapping(value="addUser")
+	public String gotoAddUser(HttpServletRequest request, HttpServletResponse response){
+		
+		User currUser = (User)request.getSession().getAttribute("user");
+		List<UserDto> userList = UserMapper.map(userService.findAll());
+		List<UserDto> parentList = new ArrayList<UserDto>();
+		for(UserDto user:userList){
+			if(user.getUserLevel()>currUser.getUserLevel()){
+				parentList.add(user);
+			}
+		}
+		List<RoleDto> roleList = RoleMapper.map(roleService.findAll());
+		
+		List<GroupDto> groupList = GroupMapper.map(groupService.findAll());
+		
+		List<DistInfoDto> levelList = DistInfoMapper.map(
+				distInfoService.findDistInfoByType(Constants.DiST_TYPE_USER_LEVEL));
+		
+		request.setAttribute("roleList", roleList); // 角色选择
+		
+		request.setAttribute("levelList", levelList); // 级别选择
+		
+		request.setAttribute("parentList", parentList); // 上级选择列表
+
+		request.setAttribute("groupList", groupList); // 团队列表
+		
+		return "user/newUser";
 	}
+	
+	@RequestMapping(value="/allUser", produces="application/json")
+	public @ResponseBody List<UserDto> allUser(){
+		List<User> channels = userService.findAll();
+		List<UserDto> userDtos = UserMapper.map(channels);
+		return userDtos;
+	}
+	
+	@RequestMapping(value="editUser")
+	public String gotoEditUser(HttpServletRequest request, HttpServletResponse response,@RequestParam String userCode){
+		
+		User currUser = (User)request.getSession().getAttribute("user");
+		List<UserDto> userList = UserMapper.map(userService.findAll());
+		List<UserDto> parentList = new ArrayList<UserDto>();
+		for(UserDto user:userList){
+			if(user.getUserLevel()>currUser.getUserLevel()){
+				parentList.add(user);
+			}
+		}
+		List<RoleDto> roleList = RoleMapper.map(roleService.findAll());
+		
+		List<DistInfoDto> levelList = DistInfoMapper.map(
+				distInfoService.findDistInfoByType(Constants.DiST_TYPE_USER_LEVEL));
+		
+		List<GroupDto> groupList = GroupMapper.map(groupService.findAll());
+		
+		User selUser = userService.findOne(userCode);
+		
+		UserDto userDto=UserMapper.map(selUser);
+		
+		request.setAttribute("userDto", userDto); // 选中用户
+
+		request.setAttribute("roleList", roleList); // 角色选择
+		
+		request.setAttribute("groupList", groupList); // 团队列表
+		
+		request.setAttribute("levelList", levelList); // 级别选择
+		
+		request.setAttribute("parentList", parentList); // 上级选择列表
+
+		return "user/editUser";
+	}
+	
+	@RequestMapping(value = "/userDetail", produces = "application/json")
+	public String userDetail(HttpServletRequest request,HttpServletResponse response,@RequestParam String userCode) {
+		User currUser = (User)request.getSession().getAttribute("user");
+		
+		UserDto userDto = UserMapper.map(userService.findOne(userCode));
+		
+		List<UserDto> userList = UserMapper.map(userService.findAll());
+		List<UserDto> parentList = new ArrayList<UserDto>();
+		for(UserDto user:userList){
+			if(user.getUserLevel()>currUser.getUserLevel()){
+				parentList.add(user);
+			}
+		}
+		List<RoleDto> roleList = RoleMapper.map(roleService.findAll());
+		
+		List<GroupDto> groupList = GroupMapper.map(groupService.findAll());
+		
+		List<DistInfoDto> levelList = DistInfoMapper.map(
+				distInfoService.findDistInfoByType(Constants.DiST_TYPE_USER_LEVEL));
+		
+		Integer showDetailFlag =0;
+		
+		if(currUser.getUserCode().equals(userDto.getUserCode())
+				|| currUser.getUserCode().equals(userDto.getpUserCode())
+				){
+			showDetailFlag=1;
+		}
+		
+		request.setAttribute("showDetailFlag", showDetailFlag);
+		request.setAttribute("userDto", userDto);
+		
+		request.setAttribute("roleList", roleList); // 角色选择
+		
+		request.setAttribute("levelList", levelList); // 级别选择
+		
+		request.setAttribute("parentList", parentList); // 上级选择列表
+		
+		request.setAttribute("groupList", groupList); // 团队列表
+		
+		return "/user/userDetail";
+	}
+	
+	
+	@RequestMapping(value="/resetPassword",method=RequestMethod.POST)
+	public @ResponseBody StatusResponse resetPassword(@RequestBody UserDto userDto,HttpServletRequest request) {
+		StatusResponse result = new StatusResponse();
+		User user = userService.findOne(userDto.getUserCode());
+		
+		user.setUserPassword("123456");
+		userService.update(user);
+		
+		result.setSuccess(true);
+		
+		return result;
+	}
+	
+	@RequestMapping(value = "/saveNewUser",method = RequestMethod.POST)
+	public @ResponseBody StatusResponse saveNewUser(@RequestBody UserDto userDto,HttpServletRequest request) {
+		StatusResponse result = checkUser(userDto);
+		
+		if(result.getSuccess()){
+			try{
+				User user = new User();
+				user.setUserCode(userDto.getUserCode());
+				user.setUserName(userDto.getUserName());
+				user.setUserPassword(userDto.getUserPassword());
+				user.setUserMobile(userDto.getUserMobile());
+				user.setUserPhone(userDto.getUserPhone());
+				user.setUserEmail(userDto.getUserEmail());
+				user.setUserAddress(userDto.getUserAddress());
+				user.setUserQq(userDto.getUserQq());
+				user.setUserWebchat(userDto.getUserWebchat());
+
+				Role role = new Role();
+				if(userDto.getRoleCode()!=null && !userDto.getRoleCode().isEmpty()){
+					role = roleService.findOne(userDto.getRoleCode());
+					user.setUserRole(role);
+				}
+
+				User parentUser = new User();
+				if(userDto.getpUserCode()!=null && !userDto.getpUserCode().isEmpty()){
+					parentUser=userService.findOne(userDto.getpUserCode());
+					user.setParentUser(parentUser);
+				}
+				
+				Group group = new Group();
+				if(userDto.getGroupCode()!=null && !userDto.getGroupCode().isEmpty()){
+					group=groupService.findOne(userDto.getGroupCode());
+					user.setUserGroup(group);
+				}
+				
+				user.setUserStatus(userDto.getUserStatus());
+				user.setUserSaleFlag(userDto.getSalesFlag());
+				user.setUserMax(userDto.getUserMax());
+				user.setUserLevel(userDto.getUserLevel());
+				if(userService.create(user)){
+					result.setSuccess(true);
+				}else{
+					result.setSuccess(false);
+				}
+			}catch(Exception ex){
+				ex.printStackTrace();
+				result.setSuccess(false);
+				result.setMessage(ex.getMessage());
+			}
+		}
+
+		return result;
+	}
+	
+	@RequestMapping(value = "/saveUser",method = RequestMethod.POST)
+	public @ResponseBody StatusResponse saveUser(@RequestBody UserDto userDto,HttpServletRequest request) {
+		StatusResponse result = checkUser(userDto);
+		
+		if(result.getSuccess()){
+			try{
+				User user = userService.findOne(userDto.getUserCode());
+				user.setUserName(userDto.getUserName());
+				user.setUserPassword(userDto.getUserPassword());
+				user.setUserMobile(userDto.getUserMobile());
+				user.setUserPhone(userDto.getUserPhone());
+				user.setUserEmail(userDto.getUserEmail());
+				user.setUserAddress(userDto.getUserAddress());
+				user.setUserQq(userDto.getUserQq());
+				user.setUserWebchat(userDto.getUserWebchat());
+
+				Role role = new Role();
+				if(userDto.getRoleCode()!=null && !userDto.getRoleCode().isEmpty()){
+					role = roleService.findOne(userDto.getRoleCode());
+					user.setUserRole(role);
+				}
+
+				User parentUser = new User();
+				if(userDto.getpUserCode()!=null && !userDto.getpUserCode().isEmpty()){
+					parentUser=userService.findOne(userDto.getpUserCode());
+					user.setParentUser(parentUser);
+				}
+				
+				Group group = new Group();
+				if(userDto.getGroupCode()!=null && !userDto.getGroupCode().isEmpty()){
+					group=groupService.findOne(userDto.getGroupCode());
+					user.setUserGroup(group);
+				}
+				
+				user.setUserStatus(userDto.getUserStatus());
+				user.setUserSaleFlag(userDto.getSalesFlag());
+				user.setUserMax(userDto.getUserMax());
+				user.setUserLevel(userDto.getUserLevel());
+				if(userService.create(user)){
+					result.setSuccess(true);
+				}else{
+					result.setSuccess(false);
+				}
+			}catch(Exception ex){
+				ex.printStackTrace();
+				result.setSuccess(false);
+				result.setMessage(ex.getMessage());
+			}
+		}
+
+		return result;
+	}
+	
 	
 	@RequestMapping(value = "/records", produces = "application/json")
 	public @ResponseBody JqgridResponse<UserDto> records(
@@ -124,12 +380,7 @@ public class UserController {
 	}
 
 	
-	@RequestMapping(value = "/get", produces = "application/json")
-	public String get(HttpServletRequest request,HttpServletResponse response,@RequestParam String userCode) {
-		UserDto userDto = UserMapper.map(userService.findOne(userCode));
-		request.setAttribute("userDto", userDto);
-		return "/user/userDetail";
-	}
+
 	
 	@RequestMapping(value = "/create", produces = "application/json", method = RequestMethod.POST)
 	public @ResponseBody StatusResponse create(
@@ -244,7 +495,60 @@ public class UserController {
 		
 		return getFilteredCustRecords(filters, pageRequest,userCode);
 	}
+	
+	/**
+	 * 跳转到修改密码页面
+	 * @param request
+	 * @param response
+	 * @param userCode
+	 * @return
+	 */
+	@RequestMapping(value="changePwd")
+	public String gotoChangPassword(HttpServletRequest request, HttpServletResponse response){
+		User currUser = (User)request.getSession().getAttribute("user");
 
+		UserDto userDto=UserMapper.map(currUser);
+		
+		request.setAttribute("userDto", userDto); // 选中用户
+
+		return "/user/changePwd";
+	}
+	
+	/**
+	 * 修改密码
+	 * @param userCode
+	 * @param userPassword
+	 * @param userNewPassword
+	 * @return
+	 */
+	@RequestMapping(value = "/savePwd", produces = "application/json", method = RequestMethod.POST)
+	public @ResponseBody StatusResponse execChangePassword(
+			@RequestBody UserDto userDto,HttpServletRequest request){
+
+		Boolean result = true;
+		List<String> messages = new ArrayList<String>();
+		try {
+			User exisitUser = userService.findOne(userDto.getUserCode());
+			if(!exisitUser.getUserPassword().equals(userDto.getUserPassword())){
+				throw new Exception("原密码不一致，请重新输入。");
+			}else{
+				exisitUser.setUserPassword(userDto.getUserNewPassword());
+				if(userService.update(exisitUser)){
+					result=true;
+					messages.add("密码修改成功。");
+				}else{
+					result=false;
+					messages.add("密码修改失败。");
+				}
+			}
+		} catch (Exception e) {
+			result = false;
+			messages.add(e.getMessage());
+		}
+		return new StatusResponse(result,messages);
+	}
+
+	
 	public JqgridResponse<CustomerDto> getFilteredCustRecords(String filters,
 			Pageable pageRequest,String userCode) {
 		JqgridFilter jqgridFilter = JqgridObjectMapper.map(filters);
@@ -324,5 +628,12 @@ public class UserController {
 		response.setTotal(Integer.valueOf(records.getTotalPages()).toString());
 		response.setPage(Integer.valueOf(records.getNumber() + 1).toString());
 		return response;
+	}
+	
+	private StatusResponse checkUser(UserDto userDto){
+		StatusResponse result = new StatusResponse();
+		result.setSuccess(true);
+
+		return result;
 	}
 }

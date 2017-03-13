@@ -3,14 +3,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
-<!-- 导入URL -->
-<c:url value="/customer/inputCustomer" var="inputUrl"/>
-
+<c:url value="/publish/records" var="recordsUrl" />
 <html lang="en">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>CRM系统</title>
-	
+
 <link rel="stylesheet" type="text/css" media="screen" href='<c:url value="/resources/css/fonts/linecons/css/linecons.css"/>' />
 <link rel="stylesheet" type="text/css" media="screen" href='<c:url value="/resources/css/fonts/fontawesome/css/font-awesome.min.css"/>' />
 <link rel="stylesheet" type="text/css" media="screen" href='<c:url value="/resources/bootstrap/css/bootstrap.min.css"/>' />
@@ -38,47 +36,31 @@
 							<a href="<c:url value='/index'/>"><i class="fa-home"></i>首页</a>
 						</li>
 						<li>
-							<a href="<c:url value='/customer/customerList'/>">客户管理</a>
+							<a href="<c:url value='/publish/publishList'/>">公告管理</a>
 						</li>
 						<li class="active">
-							<strong>导入客户信息</strong>
+							<strong>公告列表</strong>
 						</li>
 					</ol>		
 				</div>
 			</div>
-			<!-- 客户基本信息 -->
+			<!-- Content Panel -->
 			<div class="row">
 				<div class="col-md-12">
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<h3 class="panel-title">导入客户</h3>
-							<div class="panel-options">
-								<a href="#" data-toggle="panel">
-									<span class="collapse-icon">&ndash;</span>
-									<span class="expand-icon">+</span>
-								</a>
-							</div>
+							<h3 class="panel-title">公告列表</h3>
 						</div>
 						<div class="panel-body">
 							<!-- Content -->
-							<form role="form" class="form-inline" action="${inputUrl}" method="post" id="formInput" enctype="multipart/form-data">
-								<div class="form-group">
-									<label class="control-label" for="customerFile">导入文件</label>
-								</div>
-								<div class="form-group">
-									<input type="file" class="form-control" id="customerFile" name="customerFile">
-								</div>
-								<div class="form-group">
-									<button type="button" class="btn btn-secondary btn-single" id="btnInput">
-										<span>导入</span>
-									</button>
-								</div>
-							</form>
+							<div id="jgrid">
+								<table id='grid' ></table>
+								<div id='pager'></div>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			
 			<jsp:include page="../common/footer.jsp"/>
 		</div>
 	</div>
@@ -91,7 +73,8 @@
 <script type='text/ecmascript' src='<c:url value="/resources/js/xenon-api.js"/>'></script>
 <script type='text/ecmascript' src='<c:url value="/resources/js/xenon-toggles.js"/>'></script>
 <script type='text/ecmascript' src='<c:url value="/resources/js/xenon-custom.js"/>'></script>
-<script type='text/ecmascript' src='<c:url value="/resources/js/ajaxfileupload.js"/>'></script>
+
+
 <script type='text/ecmascript' src='<c:url value="/resources/jqgrid/js/i18n/grid.locale-cn.js"/>'></script>
 <script type='text/ecmascript' src='<c:url value="/resources/jqgrid/js/jquery.jqGrid.js"/>'></script>
 
@@ -100,36 +83,119 @@
 
 <script type="text/ecmascript" src='<c:url value="/resources/bootstrap/js/bootstrap3-typeahead.js"/>'></script>
 <script type="text/ecmascript" src='<c:url value="/resources/bootstrap/js/jquery.bootstrap.teninedialog.v3.js"/>'></script>	
-
 <script type='text/ecmascript'>
-$("#btnInput").click(function(){
-	
-	alert("${inputUrl}");
-	$.ajaxFileUpload({
-		url : "${inputUrl}",
-		secureuri:false,
-		fileElementId:'customerFile',
-		dataType: 'json',
-		 success: function (data, status){
-			alert("success");	 
-		 },
-		error: function (data, status, e)
-        {
-            alert("error");
-        }
-	});
-	
-	//$("#formInput").submit();
-});
-
-//$("#btnInput").click(function(){
-//	alter("${inputUrl}");
-	
-
-//	});
-
-//});
-
+	//$.jgrid.defaults.width = 780;
+	$.jgrid.defaults.responsive = true;
+	$.jgrid.defaults.styleUI = 'Bootstrap';
 </script>
 
+<script type='text/ecmascript'>
+$(function() {
+	$.jgrid.styleUI.Bootstrap.base.rowTable = "table table-bordered table-striped";
+		
+	$("#grid").jqGrid({
+		url : '${recordsUrl}',
+		datatype : 'json',
+		mtype : 'GET',
+		colModel : [ {
+			index : 'publishId',
+			name : 'publishId',
+			label : '公告Id',
+			hidden:true,
+			width : 55,
+			key : true,
+			editable : false
+		}, {
+			name : 'publishTitle',
+			index : 'publishTitle',
+			label : '公告标题',
+			width : 100,
+			editable : false
+		}, {
+			name : 'publishCTime',
+			index : 'publishCTime',
+			label : '公告创建时间',
+			width : 100,
+			editable : false
+		}, {
+			name : 'publishStatus',
+			index : 'publishStatus',
+			label : '日程状态',
+			width : 80,
+			editable : false,
+			formatter : 'select',
+			stype : 'select',
+			formatoptions : {
+				value : "1:有效;0:无效"
+			},
+			searchoptions : {
+				sopt : [ 'eq' ],
+				value : ":;1:有效;0:无效"
+			}
+		},{
+			name : 'execEdit',
+			index : 'execEdit',
+			label : '操作',
+			width : 80,
+			editable : false,
+			formatter : formatEditLink
+		}  ],
+		postData : {},
+		rowNum : 10,
+		rowList : [ 1,2,5,10, 20, 40, 60 ],
+		height : 500,
+		autowidth : true,
+		rownumbers : false,
+		pager : '#pager',
+		sortname : 'publishId',
+		viewrecords : true,
+		sortable : true,
+		loadonce : false,
+		sortorder : "asc",
+		emptyrecords : "空记录",
+		loadComplete : function() {
+			jQuery("#grid").trigger("reloadGrid");
+		},
+		jsonReader : {
+			root : "rows",
+			page : "page",
+			total : "total",
+			records : "records",
+			repeatitems : false,
+			cell : "cell",
+			id : "id"
+		},
+		onSortCol : function(index, colindex, sortorder) {
+		},
+
+	});
+
+	$("#grid").jqGrid('navGrid', '#pager', {
+		edit : false,
+		add : false,
+		del : false,
+		search : false,
+		refresh : true,
+		view : false,
+		position : "left",
+		cloneToTop : false
+	}, {}, {}, {}, { // search
+		sopt : [ 'cn', 'eq', 'ne', 'lt', 'gt', 'bw', 'ew' ],
+		closeOnEscape : true,
+		multipleSearch : true,
+		closeAfterSearch : true
+	});
+
+	// Toolbar Search
+	$("#grid").jqGrid('filterToolbar', {
+		stringResult : true,
+		searchOnEnter : true,
+		defaultSearch : "cn"
+	});
+});
+function formatEditLink(cellvalue, options, rowObject) {
+    return " <a href=/crm_web/publish/publishDetail?publishId="+ rowObject.publishId + ">[查看]</a>"
+    +" <a href=/crm_web/publish/editPublish?publishId="+ rowObject.publishId + ">[修改]</a>";
+}
+</script>
 </html>

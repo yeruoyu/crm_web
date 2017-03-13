@@ -6,18 +6,30 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 
 import com.lodge.crm.core.entity.hibernate.Publish;
+import com.lodge.crm.core.entity.hibernate.User;
 import com.lodge.crm.core.util.DateUtils;
 
 public class PublishMapper {
 	public static Publish dtoToModule(PublishDto dto){
 		Publish publish = new Publish();
-
-		publish.setPublishId(dto.getPublishId());
+		User user = new User();
+		if(dto.getPublishId()!=null){
+			publish.setPublishId(dto.getPublishId());
+		}
 		publish.setPublishTitle(dto.getPublishTitle());
 		publish.setPublishDetail(dto.getPublishDetail());
-		publish.setPublishCTime(DateUtils.parseTimestampHour(dto.getPublishCTime()));
-		publish.setPublishUTime(DateUtils.parseTimestampHour(dto.getPublishUTime()));
 		publish.setPublishStatus(dto.getPublishStatus());
+		if(dto.getPublishCTime()!=null && !dto.getPublishCTime().isEmpty()){
+			publish.setPublishCTime(DateUtils.parseTimestampHour(dto.getPublishCTime()));
+		}
+		
+		if(dto.getPublishCTime()!=null && !dto.getPublishCTime().isEmpty()){
+			publish.setPublishCTime(DateUtils.parseTimestampHour(dto.getPublishCTime()));
+		}
+		if(dto.getPublishCUserCode()!=null && !dto.getPublishCUserCode().isEmpty()){
+			user.setUserCode(dto.getPublishCUserCode());
+			publish.setPublishCUser(user);
+		}
 
 		return publish;
 	}
@@ -30,9 +42,18 @@ public class PublishMapper {
 		dto.setPublishDetail(publish.getPublishDetail());
 		dto.setPublishCTime(DateUtils.formatDateByDet(publish.getPublishCTime()));
 		dto.setPublishUTime(DateUtils.formatDateByDet(publish.getPublishUTime()));
-
 		dto.setPublishStatus(publish.getPublishStatus());
-				
+		
+		if(publish.getPublishCUser()!=null){
+			dto.setPublishCUserCode(publish.getPublishCUser().getUserCode());
+			dto.setPublishCUserName(publish.getPublishCUser().getUserName());
+		}
+		
+		if(publish.getPublishUUser()!=null){
+			dto.setPublishUUserCode(publish.getPublishUUser().getUserCode());
+			dto.setPublishUUserName(publish.getPublishUUser().getUserName());
+		}
+
 		return dto;
 	}
 	

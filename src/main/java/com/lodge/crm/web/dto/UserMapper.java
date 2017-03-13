@@ -21,6 +21,23 @@ public class UserMapper {
 		dto.setUserWebchat(user.getUserWebchat());
 		dto.setUserStatus(user.getUserStatus());
 		dto.setUserPassword(user.getUserPassword());
+		dto.setUserLevel(user.getUserLevel());
+		dto.setUserMax(user.getUserMax());
+		
+		if(user.getParentUser()!=null){
+			dto.setpUserCode(user.getParentUser().getUserCode());
+			dto.setpUserName(user.getParentUser().getUserName());
+		}
+		
+		if(user.getUserRole()!=null){
+			dto.setRoleCode(user.getUserRole().getRoleCode());
+			dto.setRoleName(user.getUserRole().getRoleName());
+		}
+		
+		if(user.getUserGroup()!=null){
+			dto.setGroupCode(user.getUserGroup().getGroupCode());
+			dto.setGroupName(user.getUserGroup().getGroupName());
+		}
 		
 		// 用户所对应的学校
 		if(user.getSchoolList() !=null && user.getSchoolList().size()>0){

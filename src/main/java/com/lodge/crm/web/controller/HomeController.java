@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.lodge.crm.core.entity.hibernate.Customer;
+import com.lodge.crm.core.entity.hibernate.CustomerRecord;
 import com.lodge.crm.core.entity.hibernate.Publish;
 import com.lodge.crm.core.entity.hibernate.User;
 import com.lodge.crm.core.service.CustomerService;
 import com.lodge.crm.core.service.PublishService;
+import com.lodge.crm.core.service.RecordService;
 import com.lodge.crm.core.service.ScheduleService;
 import com.lodge.crm.core.util.JqgridFilter;
 import com.lodge.crm.core.util.JqgridObjectMapper;
@@ -27,6 +29,8 @@ import com.lodge.crm.web.dto.CustomerDto;
 import com.lodge.crm.web.dto.CustomerMapper;
 import com.lodge.crm.web.dto.PublishDto;
 import com.lodge.crm.web.dto.PublishMapper;
+import com.lodge.crm.web.dto.RecordDto;
+import com.lodge.crm.web.dto.RecordMapper;
 import com.lodge.crm.web.dto.ScheduleDto;
 import com.lodge.crm.web.dto.ScheduleMapper;
 import com.lodge.crm.web.response.JqgridResponse;
@@ -37,6 +41,9 @@ public class HomeController {
 
 	@Autowired
 	CustomerService customerService;
+	
+	@Autowired
+	RecordService recordService;
 	
 	@Autowired
 	ScheduleService scheduleService;
@@ -60,7 +67,7 @@ public class HomeController {
 	 * @return
 	 */
 	@RequestMapping(value = "/records", produces = "application/json")
-	public @ResponseBody JqgridResponse<CustomerDto> records(
+	public @ResponseBody JqgridResponse<RecordDto> records(
 			HttpServletRequest request,
 			@RequestParam("_search") Boolean search,
 			@RequestParam(value = "filters", required = false) String filters,
@@ -84,15 +91,15 @@ public class HomeController {
 
 		User user = (User)request.getSession().getAttribute("user");
 		
-		Page<Customer> customers = customerService.findUserCustomer(user.getUserCode(), pageRequest);
-		List<CustomerDto> customerDtos = CustomerMapper.map(customers);
+		Page<CustomerRecord> records = recordService.findByUserCode(user.getUserCode(), pageRequest);
+		List<RecordDto> recordDtos = RecordMapper.map(records);
 
-		JqgridResponse<CustomerDto> response = new JqgridResponse<CustomerDto>();
-		response.setRows(customerDtos);
-		response.setRecords(Long.valueOf(customers.getTotalElements())
+		JqgridResponse<RecordDto> response = new JqgridResponse<RecordDto>();
+		response.setRows(recordDtos);
+		response.setRecords(Long.valueOf(records.getTotalElements())
 				.toString());
-		response.setTotal(Integer.valueOf(customers.getTotalPages()).toString());
-		response.setPage(Integer.valueOf(customers.getNumber() + 1).toString());
+		response.setTotal(Integer.valueOf(records.getTotalPages()).toString());
+		response.setPage(Integer.valueOf(records.getNumber() + 1).toString());
 
 		return response;
 	}

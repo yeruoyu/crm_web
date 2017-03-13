@@ -5,7 +5,7 @@
 
 <!-- 日程信息 -->
 <c:url value="/user/savePwd" var="savePwdUrl" />
-<c:url value="/user/userList" var="userListUrl" />
+<c:url value="/index" var="indexUrl" />
 
 <html lang="en">
 <head>
@@ -91,9 +91,9 @@
 								</div>
 								<div class="form-group">
 									<div class="col-sm-8">
-										<button type="button" class="btn btn-blue btn-icon pull-right" style="margin-left: 10px" id="backToList">
+										<button type="button" class="btn btn-blue btn-icon pull-right" style="margin-left: 10px" id="backToIndex">
 											<i class="fa-share"></i>
-											<span>返回员工列表</span>
+											<span>返回首页</span>
 										</button>
 										<button type="button" class="btn btn-secondary btn-icon pull-right" id="savePwd">
 											<i class="fa-check"></i>
@@ -146,8 +146,8 @@ jQuery.prototype.serializeObject=function(){
 
 <script type='text/ecmascript'>
 	//返回到客户列表
-	$("#backToList").click(function(){
-		var url='${userListUrl}';
+	$("#backToIndex").click(function(){
+		var url='${indexUrl}';
 		window.location.href= url;
 	});
 

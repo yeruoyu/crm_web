@@ -154,59 +154,30 @@ $(function() {
 			index : 'customerName',
 			label : '客户姓名',
 			width : 100,
-			editable : false,
+			editable : false
 		}, {
-			name : 'channelCode',
-			index : 'channelCode',
-			label : '来源渠道',
+			name : 'recordName',
+			index : 'recordName',
+			label : '联系人',
 			width : 100,
-			editable : false,
-			formatter : 'select',
-			stype : 'select',
-			formatoptions : {
-				value : getAllChannel()
-			}
+			editable : false
 		}, {
-			name : 'customerLocked',
-			index : 'customerLocked',
-			label : '客户锁定',
-			width : 80,
-			editable : true,
-			editrules : {
-				required : false
-			},
-			edittype : "select",
-			formatter : 'select',
-			stype : 'select',
-			editoptions : {
-				value : "1:锁定;0:未锁定"
-			},
-			formatoptions : {
-				value : "1:锁定;0:未锁定"
-			}
+			name : 'recordPhone',
+			index : 'recordPhone',
+			label : '联系电话',
+			width : 100,
+			editable : false
 		}, {
-			name : 'customerStatus',
-			index : 'customerStatus',
-			label : '客户状态',
-			width : 80,
-			editable : true,
-			editrules : {
-				required : false
-			},
-			edittype : "select",
-			formatter : 'select',
-			stype : 'select',
-			editoptions : {
-				value : "1:活动;0:停用;-1:注销"
-			},
-			formatoptions : {
-				value : "1:活动;0:停用;-1:注销"
-			}
+			name : 'recordNTime',
+			index : 'recordNTime',
+			label : '下一次联系时间',
+			width : 100,
+			editable : false
 		},{
 			name : 'execLock',
 			index : 'execLock',
-			label : '锁定',
-			width : 100,
+			label : '查看',
+			width : 60,
 			editable : false,
 			formatter : formateExceLock
 		} ],
@@ -355,7 +326,7 @@ function formateExceViewPublish(cellvalue, options, rowObject) {
 
 function formateExceLock(cellvalue, options, rowObject) {
     var strFromat =  "<a href=/crm_web/customer/customerDetail?returnUrl=myCustomerList&customerCode="+ rowObject.customerCode + ">查看</a>";
-    strFromat = strFromat +"&nbsp;<a href='#' onclick='execLock(\""+rowObject.customerCode+"\")' >锁定</a>";
+    // strFromat = strFromat +"&nbsp;<a href='#' onclick='execLock(\""+rowObject.customerCode+"\")' >锁定</a>";
 	return strFromat;
 }
 

@@ -25,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.lodge.crm.core.common.Constants;
 import com.lodge.crm.core.entity.hibernate.Channel;
-import com.lodge.crm.core.entity.hibernate.ContactInfo;
 import com.lodge.crm.core.entity.hibernate.Customer;
 import com.lodge.crm.core.entity.hibernate.CustomerUser;
 import com.lodge.crm.core.entity.hibernate.Group;
@@ -704,10 +703,10 @@ public class CustomerController {
 			@RequestParam(value = "customerFile") MultipartFile[] customerFile
 			,HttpServletRequest request
 			,HttpServletResponse response){
-		User user = (User)request.getSession().getAttribute("user");
+		//User user = (User)request.getSession().getAttribute("user");
 		Map<String,Object> resMap = new HashMap<String,Object>();
 
-		StatusResponse result = new StatusResponse(true);
+		//StatusResponse result = new StatusResponse(true);
 		
 		if(customerFile[0].isEmpty()){
 			  resMap.put("status", "请先选择文件");
@@ -750,11 +749,12 @@ public class CustomerController {
 		return resMap;
 	}
 	
+	@SuppressWarnings("unused")
 	private List<Customer> transferExcelToCustomer(InputStream is,StatusResponse result,User user){
 		
 		result.setSuccess(true);
 		List<Customer> custList = new ArrayList<Customer>();
-		ContactInfo contact = new ContactInfo();
+		//ContactInfo contact = new ContactInfo();
 		//HSSFWorkbook hssfWorkbook=null;
 //		XSSFWorkbook hssfWorkbook=null;
 //		XSSFSheet hssfSheet = null;

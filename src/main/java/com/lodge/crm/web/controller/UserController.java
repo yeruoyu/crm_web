@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.lodge.crm.core.common.Constants;
-import com.lodge.crm.core.entity.hibernate.Channel;
 import com.lodge.crm.core.entity.hibernate.Customer;
 import com.lodge.crm.core.entity.hibernate.CustomerRecord;
 import com.lodge.crm.core.entity.hibernate.Group;
@@ -34,8 +33,6 @@ import com.lodge.crm.core.service.TableKeyService;
 import com.lodge.crm.core.service.UserService;
 import com.lodge.crm.core.util.JqgridFilter;
 import com.lodge.crm.core.util.JqgridObjectMapper;
-import com.lodge.crm.web.dto.ChannelDto;
-import com.lodge.crm.web.dto.ChannelMapper;
 import com.lodge.crm.web.dto.CustomerDto;
 import com.lodge.crm.web.dto.CustomerMapper;
 import com.lodge.crm.web.dto.DistInfoDto;
